@@ -56,11 +56,20 @@ needs to change.
 
 ## Deploying to GitHub Pages
 
+Deployment is automated with GitHub Actions
+([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)): every push
+to `main` builds nothing (there's no build step) and just publishes the repo
+as-is.
+
+One-time setup:
+
 1. Push this repo to GitHub.
 2. In the repo settings, go to **Pages** → **Build and deployment** → set
-   **Source** to `Deploy from a branch`, branch `main`, folder `/ (root)`.
-3. Save. The site publishes at `https://<username>.github.io/<repo>/`.
+   **Source** to `GitHub Actions`.
+3. Push to `main` (or run the workflow manually from the **Actions** tab).
+   The site publishes at `https://<username>.github.io/<repo>/`.
 
+Every subsequent push to `main` redeploys automatically — no manual steps.
 The included `.nojekyll` file tells GitHub Pages to serve the site as-is,
 skipping Jekyll processing (not needed here, but avoids surprises with
 files/folders that start with underscores or dots).
