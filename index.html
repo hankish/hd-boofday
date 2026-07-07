@@ -64,8 +64,18 @@
 
         <div class="hero-actions">
           <a class="btn btn-primary" data-link="rsvp" href="#" target="_blank" rel="noopener">🎉 Partiful Event</a>
-          <a class="btn btn-ghost" data-link="sheet" href="#" target="_blank" rel="noopener">📋 Open the Spreadsheet</a>
-          <button class="btn btn-ghost" id="addToCalendar" type="button">📅 Add to Calendar</button>
+          <a class="btn btn-ghost" data-link="sheet" href="#" target="_blank" rel="noopener">📋 Google Sheet</a>
+          <div class="calendar-dropdown">
+            <button class="btn btn-ghost" id="calendarToggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="calendarMenu">
+              📅 Add to Calendar
+            </button>
+            <div class="calendar-menu" id="calendarMenu" role="menu" hidden>
+              <a role="menuitem" class="calendar-menu-item" href="#" target="_blank" rel="noopener" data-cal="google">🗓️ Google Calendar</a>
+              <a role="menuitem" class="calendar-menu-item" href="#" target="_blank" rel="noopener" data-cal="outlook">📆 Outlook.com</a>
+              <a role="menuitem" class="calendar-menu-item" href="#" target="_blank" rel="noopener" data-cal="yahoo">📅 Yahoo Calendar</a>
+              <button role="menuitem" class="calendar-menu-item" type="button" data-cal="ics">🍎 Apple / Other (.ics)</button>
+            </div>
+          </div>
         </div>
       </div>
 

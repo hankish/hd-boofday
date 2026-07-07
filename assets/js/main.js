@@ -113,21 +113,113 @@
     ].join("\r\n");
   }
 
-  function initCalendarButton() {
-    var btn = document.getElementById("addToCalendar");
-    if (!btn || !cfg.event) return;
+  function downloadICS(event) {
+    var ics = buildICS(event);
+    var blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "boofday.ics";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 
-    btn.addEventListener("click", function () {
-      var ics = buildICS(cfg.event);
-      var blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement("a");
-      a.href = url;
-      a.download = "boofday.ics";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+  // UTC stamp without separators, e.g. 20260725T190000Z — what Google/Yahoo expect.
+  function toCompactUTC(iso) {
+    return toICSDate(iso);
+  }
+
+  function buildGoogleUrl(event) {
+    var params = new URLSearchParams({
+      action: "TEMPLATE",
+      text: event.title,
+      dates: toCompactUTC(event.start) + "/" + toCompactUTC(event.end),
+      details: event.description,
+      location: event.location,
+    });
+    return "https://calendar.google.com/calendar/render?" + params.toString();
+  }
+
+  function buildOutlookUrl(event) {
+    var params = new URLSearchParams({
+      path: "/calendar/action/compose",
+      rru: "addevent",
+      startdt: new Date(event.start).toISOString(),
+      enddt: new Date(event.end).toISOString(),
+      subject: event.title,
+      body: event.description,
+      location: event.location,
+    });
+    return "https://outlook.live.com/calendar/0/deeplink/compose?" + params.toString();
+  }
+
+  function buildYahooUrl(event) {
+    var params = new URLSearchParams({
+      v: "60",
+      title: event.title,
+      st: toCompactUTC(event.start),
+      et: toCompactUTC(event.end),
+      desc: event.description,
+      in_loc: event.location,
+    });
+    return "https://calendar.yahoo.com/?" + params.toString();
+  }
+
+  function initCalendarButton() {
+    var toggle = document.getElementById("calendarToggle");
+    var menu = document.getElementById("calendarMenu");
+    if (!toggle || !menu || !cfg.event) return;
+
+    var googleLink = menu.querySelector('[data-cal="google"]');
+    var outlookLink = menu.querySelector('[data-cal="outlook"]');
+    var yahooLink = menu.querySelector('[data-cal="yahoo"]');
+    var icsButton = menu.querySelector('[data-cal="ics"]');
+
+    if (googleLink) googleLink.href = buildGoogleUrl(cfg.event);
+    if (outlookLink) outlookLink.href = buildOutlookUrl(cfg.event);
+    if (yahooLink) yahooLink.href = buildYahooUrl(cfg.event);
+    if (icsButton) {
+      icsButton.addEventListener("click", function () {
+        downloadICS(cfg.event);
+        closeMenu();
+      });
+    }
+
+    function openMenu() {
+      menu.hidden = false;
+      toggle.setAttribute("aria-expanded", "true");
+    }
+    function closeMenu() {
+      menu.hidden = true;
+      toggle.setAttribute("aria-expanded", "false");
+    }
+
+    toggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (menu.hidden) {
+        openMenu();
+      } else {
+        closeMenu();
+      }
+    });
+
+    menu.querySelectorAll("a.calendar-menu-item").forEach(function (link) {
+      link.addEventListener("click", closeMenu);
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!menu.hidden && !menu.contains(e.target) && e.target !== toggle) {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !menu.hidden) {
+        closeMenu();
+        toggle.focus();
+      }
     });
   }
 
