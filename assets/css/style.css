@@ -424,8 +424,15 @@ ul {
   display: flex;
   justify-content: center;
 }
-.alien-svg {
+.hero-art-frame {
   width: min(100%, 320px);
+}
+.hero-alien-img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.55);
 }
 .float {
   animation: bob 4.5s ease-in-out infinite;
