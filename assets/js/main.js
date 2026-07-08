@@ -187,7 +187,13 @@
       });
     }
 
+    function positionMenu() {
+      var rect = toggle.getBoundingClientRect();
+      menu.style.top = rect.bottom + 8 + "px";
+      menu.style.left = rect.left + "px";
+    }
     function openMenu() {
+      positionMenu();
       menu.hidden = false;
       toggle.setAttribute("aria-expanded", "true");
     }
@@ -220,6 +226,13 @@
         closeMenu();
         toggle.focus();
       }
+    });
+
+    window.addEventListener("scroll", function () {
+      if (!menu.hidden) closeMenu();
+    }, { passive: true });
+    window.addEventListener("resize", function () {
+      if (!menu.hidden) closeMenu();
     });
   }
 

@@ -380,9 +380,7 @@ ul {
   display: inline-flex;
 }
 .calendar-menu {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  left: 0;
+  position: fixed;
   min-width: 230px;
   max-width: calc(100vw - 2 * var(--pad));
   background: rgba(20, 12, 42, 0.98);
